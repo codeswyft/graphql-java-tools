@@ -10,6 +10,49 @@ Initially I did this to create and build the branch:
 - mvn clean install (to build the project)
     - jar is located in ./target/graphql-java-tools-13.0.2-SNAPSHOT.jar
 
+## Publishing (Maven)
+
+To publish this JAR to our GCP `fiedler-infra` account simply run this (it will build and deploy/push it to GCP):
+
+```
+mvn deploy
+```
+
+NOTE: To publish the JAR you will need create the file `~/.m2/settings.xml`. See `fielder-infra` security manager for
+the secret `M2_SETTINGS_XML_FILE` that has the contents of the file you
+need.
+
+## Using the JAR (Gradle)
+
+```
+repositories {
+    mavenLocal()
+    maven {
+        url "https://us-central1-maven.pkg.dev/fielder-infra/fielder-central"
+        credentials {
+            username = "_json_key_base64"
+            password = System.getenv('FIELDER_CENTRAL_PWD')
+        }
+        authentication {
+            basic(BasicAuthentication)
+        }
+    }
+    mavenCentral()
+    google()
+}
+```
+
+And (match whatever version you want to pull):
+
+```
+implementation 'com.graphql-java-kickstart:graphql-java-tools:13.0.5'
+```
+
+NOTE: To access the JAR you will need create an env var `FIELDER_CENTRAL_PWD`. See `fielder-infra` security manager for
+the secret `FIELDER_CENTRAL_PWD` that you should use to set your env var (in your `~/.zshrc` file).
+
+## Local Development
+
 To publish this JAR to your local maven repo:
 
 ```
@@ -21,31 +64,13 @@ To use this JAR as a dependency in your gradle project, adjust your build.gradle
 ```
 repositories {
     mavenLocal() // << add that if you want to build locally and use it
-    maven {
-        url "artifactregistry://us-central1-maven.pkg.dev/fielder-infra/fielder-central"
-    }
     mavenCentral()
     google()
 }
 ```
 
-And:
+And (match whatever version is defined in the `pom.xml` file):
 
 ```
 implementation 'com.graphql-java-kickstart:graphql-java-tools:13.0.4'
 ```
-
-I will publish this JAR to our GCP `fiedler-infra` account, so we can reference/use it in
-our `fielder-backend` `build.gradle` file.
-
-To publish this JAR to our GCP `fiedler-infra` account (make sure to adjust the version number in the `pom.xml` file,
-and use the same one on the command line when building the JAR before attempting to push it to GCP otherwise it will
-fail)
-
-```
-mvn deploy
-```
-
-NOTE: You will need to get the credentials for the GCP account that you will need to put into your `~/.m2/settings.xml`
-file. See `fielder-infra` security manager for the secret `M2_SETTINGS_XML_FILE` that has the contents of the file you
-need.
