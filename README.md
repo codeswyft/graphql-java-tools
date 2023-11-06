@@ -53,10 +53,14 @@ the secret `FIELDER_CENTRAL_PWD` that you should use to set your env var (in you
 
 ## Local Development
 
-To publish this JAR to your local maven repo:
+To publish this JAR to your local maven repo (make sure to adjust the version to match the `pom.xml` file to whatever
+you will use in the command below):
 
 ```
-mvn install:install-file -Dfile=target/graphql-java-tools-13.0.4.jar -DgroupId=com.graphql-java-kickstart -DartifactId=graphql-java-tools -Dversion=13.0.4 -Dpackaging=jar
+VER=13.0.7 && mvn clean install \
+  && mvn install:install-file -Dfile=target/graphql-java-tools-$VER.jar \
+  -DgroupId=com.graphql-java-kickstart -DartifactId=graphql-java-tools \
+  -Dversion=$VER -Dpackaging=jar
 ```
 
 To use this JAR as a dependency in your gradle project, adjust your build.gradle as follows:
